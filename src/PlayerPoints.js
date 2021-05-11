@@ -1,9 +1,5 @@
 import { useSelector } from "react-redux";
-
-const selectPlayerPoints = (playerId) => {
-  return (state) =>
-    state.history.filter((item) => item.winner === playerId).length;
-};
+import { selectPlayerPoints } from "./selectors";
 
 export function PlayerPoints({ playerId, playerName }) {
   const playerPoints = useSelector(selectPlayerPoints(playerId));
