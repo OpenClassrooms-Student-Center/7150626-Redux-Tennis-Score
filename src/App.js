@@ -1,5 +1,11 @@
-function App() {
-  return <div>Hello OpenClassrooms !</div>;
-}
+import { PlayPauseButton } from "./PlayPauseButton";
+import { Display } from "./Display";
 
-export default App;
+export default function App() {
+  return (
+    <div>
+      <Display />
+      <PlayPauseButton />
+    </div>
+  );
+}
