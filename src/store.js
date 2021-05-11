@@ -7,7 +7,7 @@ const initialState = {
   player2: 0,
   advantage: null,
   winner: null,
-  playing: true,
+  playing: false,
   // historique des jeux joués
   history: [
     // { player1: 15, player2: 40, winner: "player2" }
@@ -16,7 +16,10 @@ const initialState = {
 
 // actions creators
 
-export const playPause = () => ({ type: "playPause" });
+const setPlaying = (playing) => ({
+  type: "setPlaying",
+  payload: playing,
+});
 
 export const restartGame = () => ({ type: "restart" });
 
@@ -24,6 +27,29 @@ export const pointScored = (player) => ({
   type: "pointScored",
   payload: { player: player },
 });
+
+export function autoplay(store) {
+  const isPlaying = store.getState().playing;
+  if (isPlaying) {
+    // Déjà entrain de jouer, on ne fait rien
+    return;
+  }
+  // on indique que la partie est en cours
+  store.dispatch(setPlaying(true));
+  // on utilise setTimeout pour attendre 2 secondes
+  window.setTimeout(() => {
+    // le jeu est-il toujours en cours ?
+    if (store.getState().playing === false) {
+      // Si non, on ne fait rien
+      return;
+    }
+    // si oui on marque un point aléatoire
+    const pointWinner = Math.random() > 0.5 ? "player1" : "player2";
+    store.dispatch(pointScored(pointWinner));
+    // on remet le jeu en pause
+    store.dispatch(setPlaying(false));
+  }, 2000);
+}
 
 function reducer(state = initialState, action) {
   if (action.type === "restart") {
@@ -41,15 +67,12 @@ function reducer(state = initialState, action) {
       draft.player2 = 0;
       draft.advantage = null;
       draft.winner = null;
-      draft.playing = true;
+      draft.playing = false;
     });
   }
-  if (action.type === "playPause") {
-    if (state.winner) {
-      return state;
-    }
+  if (action.type === "setPlaying") {
     return produce(state, (draft) => {
-      draft.playing = !draft.playing;
+      draft.playing = action.payload;
     });
   }
   if (action.type === "pointScored") {
@@ -57,10 +80,6 @@ function reducer(state = initialState, action) {
     const otherPlayer = player === "player1" ? "player2" : "player1";
     if (state.winner) {
       // On ne peut pas marquer de point si le set est terminé
-      return state;
-    }
-    if (state.playing === false) {
-      // On ne peut pas marquer de point si le set est en pause
       return state;
     }
     return produce(state, (draft) => {
