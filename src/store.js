@@ -1,4 +1,5 @@
 import { createStore } from "redux";
+import produce from "immer";
 
 // state
 const initialState = {
@@ -28,10 +29,9 @@ function reducer(state = initialState, action) {
     if (state.winner) {
       return state;
     }
-    return {
-      ...state,
-      playing: !state.playing,
-    };
+    return produce(state, (draft) => {
+      draft.playing = !draft.playing;
+    });
   }
   if (action.type === "pointScored") {
     const player = action.payload.player;
