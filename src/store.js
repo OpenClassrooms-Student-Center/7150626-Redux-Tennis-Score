@@ -30,25 +30,32 @@ export const pointScored = (player) => ({
 
 export function autoplay(store) {
   const isPlaying = store.getState().playing;
-  if (isPlaying) {
+  if (isPlaying || store.getState().winner) {
     // Déjà entrain de jouer, on ne fait rien
     return;
   }
   // on indique que la partie est en cours
   store.dispatch(setPlaying(true));
-  // on utilise setTimeout pour attendre 2 secondes
-  window.setTimeout(() => {
-    // le jeu est-il toujours en cours ?
+  playNextPoint();
+  function playNextPoint() {
     if (store.getState().playing === false) {
-      // Si non, on ne fait rien
       return;
     }
-    // si oui on marque un point aléatoire
-    const pointWinner = Math.random() > 0.5 ? "player1" : "player2";
-    store.dispatch(pointScored(pointWinner));
-    // on remet le jeu en pause
-    store.dispatch(setPlaying(false));
-  }, 2000);
+    const time = 1000 + Math.floor(Math.random() * 2000);
+    window.setTimeout(() => {
+      if (store.getState().playing === false) {
+        return;
+      }
+      // si oui on marque un point aléatoire
+      const pointWinner = Math.random() > 0.5 ? "player1" : "player2";
+      store.dispatch(pointScored(pointWinner));
+      if (store.getState().winner) {
+        store.dispatch(setPlaying(false));
+        return;
+      }
+      playNextPoint();
+    }, time);
+  }
 }
 
 function reducer(state = initialState, action) {

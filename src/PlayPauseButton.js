@@ -13,7 +13,7 @@ export function PlayPauseButton() {
         autoplay(store);
       }}
     >
-      {playing ? "Point en cours..." : "Jouer"}
+      {playing ? "Jeu en cours..." : "Jouer"}
     </button>
   );
 }

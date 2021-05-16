@@ -38,9 +38,9 @@ export const selectPlayerScore = (playerId) => {
 export const selectDisplayText = (state) => {
   if (state.winner) {
     if (state.winner === "player1") {
-      return "Joueur 1 gagne le set";
+      return "Joueur 1 gagne le jeu";
     } else {
-      return "Joueur 2 gagne le set";
+      return "Joueur 2 gagne le jeu";
     }
   } else {
     let text = "Le score est: " + state.player1 + " - " + state.player2;
